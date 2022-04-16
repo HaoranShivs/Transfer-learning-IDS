@@ -5,6 +5,7 @@
         "dtype",
         "kddcup",
         "loadtxt",
+        "optim",
         "savetxt"
     ]
 }
