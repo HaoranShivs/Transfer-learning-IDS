@@ -42,4 +42,5 @@ class multCNN(nn.Module):
         x = self.cnn_3(x)
         x = permute(x, (1,0))
         x = self.fc_output(x)
+        x = self.softmax(x)
         return x

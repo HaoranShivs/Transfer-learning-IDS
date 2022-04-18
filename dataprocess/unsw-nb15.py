@@ -8,7 +8,7 @@ class UNSW_NB15_BASE(Dataset):
         assert mode == 'Train' or mode == 'Test'
         # self.mode = mode
         self.data_array = None
-        self.to_num_column_idx = [0,2,3,4,5,13,47]
+        self.to_num_column_idx = [0,1,2,3,4,5,13,47]
         self.columns_name = ['srcip', 'sport', 'dstip', 'dsport', 'proto', 'state', 'dur', 'sbytes', 'dbytes', 'sttl', 'dttl', 'sloss', 'dloss', 
                             'service', 'sload', 'dload', 'spkts', 'dpkts', 'swin', 'dwin', 'stcpb', 'dtcpb', 'smeansz', 'dmeansz', 'trans_depth', 
                             'res_bdy_len', 'res_bdy_len', 'sjit', 'djit', 'stime', 'ltime', 'sintpkt', 'dintpkt', 'tcprtt', 'synack', 'ackdat', 
@@ -16,6 +16,7 @@ class UNSW_NB15_BASE(Dataset):
                             'ct_dst_ltm', 'ct_src_ltm', 'ct_src_dport_ltm', 'ct_dst_sport_ltm', 'ct_dst_src_ltm', 'attack_cat', 'Label']
         self.discrete_column = [0,1,2,3,4,5,13,35,38,41,47,48]
         self.to_num_column_dic = None
+        self.data_num = 0
         self.raw_data_dir_list = [root_dir + '/' + i for i in os.listdir(root_dir)]
         self.processed_train_data_dir = root_dir + '/unsw_nb_trainset.csv'
         self.processed_test_data_dir = root_dir + '/unsw_nb_testset.csv'
@@ -41,6 +42,7 @@ class UNSW_NB15_BASE(Dataset):
         self.data_array = np.loadtxt(self.raw_data_dir_list[0], dtype=np.string_, delimiter=',', encoding='Latin-1', converters={0:del_unicode_start, 1:garbled, 47:null_string})
         # for i in range(1, len(self.raw_data_dir_list)):
         #     self.data_array = np.vstack((self.data_array, np.loadtxt(self.raw_data_dir_list[i], dtype=np.string_, delimiter=',', encoding='Latin-1', converters={0:del_unicode_start, 1:garbled, 47:null_string})))
+        self.data_num = self.data_array.shape[0]
         print('### load raw data over ###')
 
     def unsw_nb_numerical(self):
@@ -65,9 +67,12 @@ class UNSW_NB15_BASE(Dataset):
         for i in self.to_num_column_idx:
             key, value = string_to_num(self.data_array, i)
             to_num_column_dic.append(dict(zip(key,value)))
-        self.data_array = self.data_array.astype(np.float32)
+            print('### ', key, value, ' ###')
 
         self.to_num_column_dic = dict(zip(self.to_num_column_idx, to_num_column_dic))
+
+        self.data_array = self.data_array.astype(np.float32)
+
     
     def normalize(self):
         column_idx = [i for i in range(42)]
@@ -108,7 +113,7 @@ if __name__ == '__main__':
     dataset = UNSW_NB15_BASE('E:/DataSets/UNSW-NB15 - CSV Files/dataset')
     dataset.load_raw_data()
     dataset.data_process()
-    dataset.save_data()
+    # dataset.save_data()
     # for i in range(5):
     #     print(dataset[i])
     # print(dataset[5][0].shape)
