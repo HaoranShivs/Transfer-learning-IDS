@@ -8,18 +8,19 @@ class UNSW_NB15_BASE(Dataset):
         assert mode == 'Train' or mode == 'Test'
         # self.mode = mode
         self.data_array = None
-        self.to_num_column_idx = [0,1,2,3,4,5,13,47]
         self.columns_name = ['srcip', 'sport', 'dstip', 'dsport', 'proto', 'state', 'dur', 'sbytes', 'dbytes', 'sttl', 'dttl', 'sloss', 'dloss', 
                             'service', 'sload', 'dload', 'spkts', 'dpkts', 'swin', 'dwin', 'stcpb', 'dtcpb', 'smeansz', 'dmeansz', 'trans_depth', 
-                            'res_bdy_len', 'res_bdy_len', 'sjit', 'djit', 'stime', 'ltime', 'sintpkt', 'dintpkt', 'tcprtt', 'synack', 'ackdat', 
+                            'res_bdy_len', 'sjit', 'djit', 'stime', 'ltime', 'sintpkt', 'dintpkt', 'tcprtt', 'synack', 'ackdat', 
                             'is_sm_ips_ports', 'ct_state_ttl', 'ct_flw_http_mthd', 'is_ftp_login', 'ct_ftp_cmd', 'ct_srv_src', 'ct_srv_dst',
                             'ct_dst_ltm', 'ct_src_ltm', 'ct_src_dport_ltm', 'ct_dst_sport_ltm', 'ct_dst_src_ltm', 'attack_cat', 'Label']
+        self.to_num_column_idx = [0,2,4,5,13,47]
         self.discrete_column = [0,1,2,3,4,5,13,35,38,41,47,48]
         self.to_num_column_dic = None
         self.data_num = 0
         self.raw_data_dir_list = [root_dir + '/' + i for i in os.listdir(root_dir)]
-        self.processed_train_data_dir = root_dir + '/unsw_nb_trainset.csv'
-        self.processed_test_data_dir = root_dir + '/unsw_nb_testset.csv'
+        self.processed_train_data_dir = root_dir + '/unsw_nb_99_trainset.csv'
+        self.processed_test_data_dir = root_dir + '/unsw_nb_99_testset.csv'
+
 
     def load_raw_data(self):
         def del_unicode_start(x):
@@ -30,26 +31,33 @@ class UNSW_NB15_BASE(Dataset):
         def null_string(x):
             if x == '':
                 return '0'
+            if x == ' ':
+                return '0'
             else:
                 return x
         def garbled(x):
             if x == '0x000b':
-                return '0'
+                return '11'
             elif x == '0x000c':
+                return '12'
+            elif x == '0xc0a8':
+                return '49320'
+            elif x == '0x20205321':
+                return '0'
+            elif x =='0xcc09':
+                return '52233'
+            elif x == '-':
                 return '0'
             else:
                 return x
-        self.data_array = np.loadtxt(self.raw_data_dir_list[0], dtype=np.string_, delimiter=',', encoding='Latin-1', converters={0:del_unicode_start, 1:garbled, 47:null_string})
-        # for i in range(1, len(self.raw_data_dir_list)):
-        #     self.data_array = np.vstack((self.data_array, np.loadtxt(self.raw_data_dir_list[i], dtype=np.string_, delimiter=',', encoding='Latin-1', converters={0:del_unicode_start, 1:garbled, 47:null_string})))
+        self.data_array = np.loadtxt(self.raw_data_dir_list[0], dtype=np.string_, delimiter=',', encoding='Latin-1', converters={0:del_unicode_start, 1:garbled, 3:garbled, 37:null_string, 38:null_string, 39:null_string, 47:null_string})
+        for i in range(1, len(self.raw_data_dir_list)):
+            self.data_array = np.vstack((self.data_array, np.loadtxt(self.raw_data_dir_list[i], dtype=np.string_, delimiter=',', encoding='Latin-1', converters={0:del_unicode_start, 1:garbled, 3:garbled, 37:null_string, 38:null_string, 39:null_string, 47:null_string})))
         self.data_num = self.data_array.shape[0]
         print('### load raw data over ###')
 
-    def unsw_nb_numerical(self):
-        '''column [1,2,3,11,13,14,20,21,41] are discrete, need to separated
-           columns need to be converted to num :[1,2,3,41]
-        '''
 
+    def unsw_nb_numerical(self):
         def string_to_num(data_array, column_index):
             unique_protocol, times = np.unique(data_array[:, column_index], axis=0, return_counts=True)
             times_sort_idx = np.argsort(times, axis=0) # descending
@@ -67,15 +75,31 @@ class UNSW_NB15_BASE(Dataset):
         for i in self.to_num_column_idx:
             key, value = string_to_num(self.data_array, i)
             to_num_column_dic.append(dict(zip(key,value)))
-            print('### ', key, value, ' ###')
 
         self.to_num_column_dic = dict(zip(self.to_num_column_idx, to_num_column_dic))
 
         self.data_array = self.data_array.astype(np.float32)
 
-    
+
+    '''def numerical_test(self):
+        fail_typecast_dic = {}
+        index_list = [i for i in range(len(self.columns_name)) if i not in self.to_num_column_idx]
+        for i in index_list:
+            fail_typecast_list = []
+            unique_protocol = np.unique(self.data_array[:, i], axis=0)
+            for j in range(unique_protocol.shape[0]):
+                try:
+                    unique_protocol[j].astype(np.float32)
+                except ValueError:
+                    fail_typecast_list.append(unique_protocol[j])
+
+            fail_typecast_dic.update(dict(zip([i], [fail_typecast_list])))
+            
+        return fail_typecast_dic'''
+
+
     def normalize(self):
-        column_idx = [i for i in range(42)]
+        column_idx = [i for i in range(len(self.columns_name))]
         continuous_column_idx = [i for i in column_idx if i not in self.discrete_column]
 
         target_part = self.data_array[:,continuous_column_idx]
@@ -88,13 +112,16 @@ class UNSW_NB15_BASE(Dataset):
         self.data_array[:,continuous_column_idx] = (self.data_array[:,continuous_column_idx] - column_min) / (__range)
         self.data_array[:,continuous_column_idx] = np.where(_range == 0, 0, self.data_array[:,continuous_column_idx])
 
+
     def disorder(self):
         np.random.shuffle(self.data_array)
+
 
     def data_process(self):
         self.unsw_nb_numerical()
         self.normalize()
         self.disorder()
+
 
     def __getitem__(self, index):
         return self.data_array[index,:47], self.data_array[index, 47], self.data_array[index, 48]
@@ -106,17 +133,17 @@ class UNSW_NB15_BASE(Dataset):
 
     def save_data(self):
         num = int(self.data_num * 0.6)
-        np.savetxt(self.processed_train_data_dir, self.data_array[:num,:], delimiter=',')
-        np.savetxt(self.processed_test_data_dir, self.data_array[num:,:], delimiter=',')
+        np.savetxt(self.processed_train_data_dir, self.data_array[:num], delimiter=',')
+        np.savetxt(self.processed_test_data_dir, self.data_array[num:], delimiter=',')
     
 if __name__ == '__main__':
     dataset = UNSW_NB15_BASE('E:/DataSets/UNSW-NB15 - CSV Files/dataset')
     dataset.load_raw_data()
     dataset.data_process()
-    # dataset.save_data()
+    dataset.save_data()
     # for i in range(5):
     #     print(dataset[i])
     # print(dataset[5][0].shape)
     # print(dataset.__len__())
-    # print(dataset.to_num_column_dic)
+    print(dataset.to_num_column_dic)
 
