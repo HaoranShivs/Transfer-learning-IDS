@@ -157,7 +157,7 @@ class KDD_CUP_99_DataLoader(DataLoader):
         self.data.load_processed_data()
         if category != None and category in self.data.label_category.keys():
             self.data.get_category_data(category)
-        super().__init__(self.data, batch_size=batch_size, shuffle=True, drop_last=True)
+        Dataloader(self.data, batch_size=batch_size, shuffle=True, drop_last=True)
 
 
 if __name__ == '__main__':
