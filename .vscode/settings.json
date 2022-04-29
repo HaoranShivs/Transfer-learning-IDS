@@ -8,6 +8,7 @@
         "loadtxt",
         "optim",
         "savetxt",
+        "UNSW",
         "vstack"
     ]
 }
