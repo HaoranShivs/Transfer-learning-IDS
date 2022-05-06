@@ -20,6 +20,8 @@ class UNSW_NB15_BASE(Dataset):
                                   5: {b'FIN': 0, b'CON': 1, b'INT': 2, b'REQ': 3, b'RST': 4, b'ECO': 5, b'CLO': 6, b'URH': 7, b'ACC': 8, b'PAR': 9, b'TST': 10, b'ECR': 11, b'no': 12, b'URN': 13, b'MAS': 14, b'TXD': 15}, 
                                   13: {b'-': 0, b'dns': 1, b'http': 2, b'ftp-data': 3, b'smtp': 4, b'ftp': 5, b'ssh': 6, b'pop3': 7, b'dhcp': 8, b'ssl': 9, b'snmp': 10, b'radius': 11, b'irc': 12}, 
                                   47: {b'Normal': 0, b'Generic': 1, b'Exploits': 2, b'Fuzzers': 3, b'DoS': 4, b' Reconnaissance': 5, b'Analysis': 6, b'Backdoors': 7, b'Shellcode': 8, b'Worms': 9}}
+        
+        self.label_dic = {b'Normal': 0, b'Generic': 1, b'Exploits': 2, b'Fuzzers': 3, b'DoS': 4, b' Reconnaissance': 5, b'Analysis': 6, b'Backdoors': 7, b'Shellcode': 8, b'Worms': 9}
 
         self.data_num = 0
         self.raw_data_dir_list = [root_dir + '/raw_dataset/' + i for i in os.listdir(root_dir + '/raw_dataset/')]
