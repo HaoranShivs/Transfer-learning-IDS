@@ -22,6 +22,7 @@ class KDD_CUP_99_Base(Dataset):
                                   3: {b'SF': 0, b'S0': 1, b'REJ': 2, b'RSTR': 3, b'RSTO': 4, b'SH': 5, b'S1': 6, b'S2': 7, b'RSTOS0': 8, b'OTH': 9, b'S3': 10}, 
                                   41: {b'smurf.': 0, b'neptune.': 1, b'normal.': 2, b'satan.': 3, b'ipsweep.': 4, b'portsweep.': 5, b'nmap.': 6, b'back.': 7, b'warezclient.': 8, b'teardrop.': 9, b'pod.': 10, b'guess_passwd.': 11, b'buffer_overflow.': 12, b'land.': 13, b'warezmaster.': 14, b'imap.': 15, b'rootkit.': 16, b'loadmodule.': 17, b'ftp_write.': 18, b'multihop.': 19, b'phf.': 20, b'perl.': 21, b'spy.': 22}}
         self.label_category = {'NORMAL':[2], 'PROBE':[3, 4, 5, 6], 'DOS':[0, 1, 7, 9, 10, 13], 'U2R':[12, 16, 17, 21], 'R2L':[8, 11, 14, 15, 18, 19, 20, 22]}
+        
         self.load_data_dir = root_dir + '/kddcup.data.corrected'
         self.processed_train_data_dir = root_dir + '/kddcup_trainset.csv'
         self.processed_test_data_dir = root_dir + '/kddcup_testset.csv'
