@@ -1,0 +1,19 @@
+
+##########  history/CNN3_3/UNSW_NB15_Adam/plot/confusion_matrix/5_10 ##########
+                precision    recall  f1-score   support
+
+        Normal       0.87      1.00      0.93    887194
+       Generic       1.00      0.00      0.00     86335
+      Exploits       1.00      0.00      0.00     17636
+       Fuzzers       1.00      0.00      0.00      9792
+           DoS       1.00      0.00      0.00      6581
+Reconnaissance       1.00      0.00      0.00      5560
+      Analysis       1.00      0.00      0.00      1071
+     Backdoors       1.00      0.00      0.00       933
+     Shellcode       1.00      0.00      0.00       638
+         Worms       1.00      0.00      0.00        68
+
+      accuracy                           0.87   1015808
+     macro avg       0.99      0.10      0.09   1015808
+  weighted avg       0.89      0.87      0.81   1015808
+

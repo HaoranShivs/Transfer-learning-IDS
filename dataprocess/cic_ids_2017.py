@@ -2,6 +2,9 @@ import numpy as np
 import pandas as pd
 import glob
 import os
+from PIL import Image
+from torch import feature_alpha_dropout
+
 from torch.utils.data import DataLoader, Dataset
 
 pd.set_option('display.max_columns', None)
@@ -39,10 +42,13 @@ class CIC_IDS_2107_Base(Dataset):
         ]
         self.Dports_use = [80, 53, 443, 21, 22]
         self.data_num = 0
+        self.data_feature = None
+        self.data_label = None
+        self.feature_length = 0
         # self.label_category = ['BENIGN', 'DoS Hulk', 'PortScan', 'DDoS', 'DoS GoldenEye', 'FTP-Patator', 'SSH-Patator', 'DoS slowloris', 'DoS Slowhttptest', 'Bot', 'Web Attack Brute Force', 'Web Attack XSS', 'Infiltration', 'Web Attack Sql Injection', 'Heartbleed']
-        self.label_category = [
-            'BENIGN', 'Dos', 'PortScan', 'DDoS', 'Brute Force', 'Bot', 'Web Attack', 'Infiltration', 'Heartbleed'
-        ]
+        self.label_category = {
+            'BENIGN':0, 'Bot':1, 'Brute Force':2, 'DDoS':3, 'Dos':4, 'Heartbleed':5, 'Infiltration':6, 'PortScan':7, 'Web Attack':8
+        }
         self.columns_name = [
             ' Flow Duration', ' Total Fwd Packets', ' Total Backward Packets', 'Total Length of Fwd Packets',
             ' Total Length of Bwd Packets', ' Fwd Packet Length Max', ' Fwd Packet Length Min', ' Fwd Packet Length Mean',
@@ -68,20 +74,18 @@ class CIC_IDS_2107_Base(Dataset):
         self.sort_data_dir = root_dir + '/sorted_data/'
         self.processed_train_data_dir = root_dir + '/cic_ids_2017_trainset.csv'
         self.processed_test_data_dir = root_dir + '/cic_ids_2017_testset.csv'
+        self.rebalanced_train_data_dir = root_dir + '/cic_ids_2017_rebalanced_trainset.csv'
+        self.rebalanced_test_data_dir = root_dir + '/cic_ids_2017_rebalanced_testset.csv'
 
-    def get_category_data(self, category):
-        indices = self.label_category[category]
-        select = self.__if_in(self.data_array, indices)
-
-        self.data_array = self.data_array[select]
 
     def data_process(self):
-        # here to make columns ' name more concise
         self.pd_DataFrame[' Protocol'] = self.pd_DataFrame[' Protocol'].astype(int)
         # make Destination ports more useful
         Dport_replace = lambda x: x if x in self.Dports_use else 0
         self.pd_DataFrame[' Destination Port'] = self.pd_DataFrame[' Destination Port'].astype(int)
         self.pd_DataFrame[' Destination Port'] = self.pd_DataFrame[' Destination Port'].apply(Dport_replace)
+        label_information = self.pd_DataFrame[' Label'].value_counts(normalize=True)
+        print(label_information)
         # use one-hot coding the ['Protocol'] and data_label
         self.pd_DataFrame = pd.get_dummies(self.pd_DataFrame,
                                            columns=[' Destination Port', ' Protocol', ' Label'],
@@ -140,47 +144,97 @@ class CIC_IDS_2107_Base(Dataset):
         self.pd_DataFrame = df
         self.data_num = self.pd_DataFrame.shape[0]
 
+    def load_sorted_data_rebalance(self):
+        sort_data_dir_list = [self.sort_data_dir + i for i in os.listdir(self.sort_data_dir)]
+
+        df = pd.read_csv(sort_data_dir_list[0], header=0, nrows=50000)
+        data = df
+        num = df.shape[0]
+        if num < 50000:
+            need_num = 50000 - num
+            times, remainder = int(need_num/num), need_num%num
+            for i in range(times):
+                data = data.append(df)
+            data = data.append(df.iloc[:remainder])
+            print(data.shape)
+        for i in range(1, len(sort_data_dir_list)):
+            _df = pd.read_csv(sort_data_dir_list[i], header=0, nrows=50000)
+            data = data.append(_df)
+            num = _df.shape[0]
+            if num < 50000:
+                need_num = 50000 - num
+                times, remainder = int(need_num/num), need_num%num
+                for j in range(times):
+                    data = data.append(_df)
+                data = data.append(_df.iloc[:remainder])
+            print(data.shape)
+        print('load sorted data over')
+
+        self.pd_DataFrame = data
+        self.data_num = self.pd_DataFrame.shape[0]
+
     def load_processed_data(self):
         if self.mode == 'Train':
-            self.data_array = np.loadtxt(self.processed_train_data_dir, dtype=np.float32, delimiter=',')
+            data_array = np.loadtxt(self.processed_train_data_dir, dtype=np.float32, delimiter=',')
         if self.mode == 'Test':
-            self.data_array = np.loadtxt(self.processed_test_data_dir, dtype=np.float32, delimiter=',')
-        self.data_num = self.data_array.shape[0]
+            data_array = np.loadtxt(self.processed_test_data_dir, dtype=np.float32, delimiter=',')
+        self.data_num = data_array.shape[0]
+        label_length = len(self.label_category)
+        feature_length = data_array.shape[1] - label_length
+        self.data_feature = data_array[:,:feature_length].copy()
+        self.data_label = data_array[:,feature_length:].copy()
+        self.feature_length = feature_length
+        data_array = None
 
-    def save_data(self):
+    def load_rebalanced_data(self):
+        if self.mode == 'Train':
+            data_array = np.loadtxt(self.rebalanced_train_data_dir, dtype=np.float32, delimiter=',')
+        if self.mode == 'Test':
+            data_array = np.loadtxt(self.rebalanced_test_data_dir, dtype=np.float32, delimiter=',')
+        self.data_num = data_array.shape[0]
+        label_length = len(self.label_category)
+        feature_length = data_array.shape[1] - label_length
+        self.data_feature = data_array[:,:feature_length].copy()
+        self.data_label = data_array[:,feature_length:].copy()
+        self.feature_length = feature_length
+        data_array = None
+
+    def save_data(self, save_dirs=None):
         num = int(self.data_num * 0.6)
-        self.pd_DataFrame.iloc[:num].to_csv(self.processed_train_data_dir, index=False, header=False)
-        self.pd_DataFrame.iloc[num:].to_csv(self.processed_test_data_dir, index=False, header=False)
+        if save_dirs == None:
+            self.pd_DataFrame.iloc[:num].to_csv(self.processed_train_data_dir, index=False, header=False)
+            self.pd_DataFrame.iloc[num:].to_csv(self.processed_test_data_dir, index=False, header=False)
+        else:
+            self.pd_DataFrame.iloc[:num].to_csv(save_dirs[0], index=False, header=False)
+            self.pd_DataFrame.iloc[num:].to_csv(save_dirs[1], index=False, header=False)
 
     def __getitem__(self, index):
-        return self.data_array[index, :85], self.data_array[index, 85:]
+        return self.data_feature[index], self.data_label[index]
 
     def __len__(self):
-        return self.data_array.shape[0]
+        return self.data_num
 
 
 class CIC_IDS_2107_DataLoader(DataLoader):
 
-    def __init__(self, root_dir, batch_size=1, mode='Train', category=None):
+    def __init__(self, root_dir, batch_size=1, mode='Train', rebalanced=False):
         assert mode == 'Train' or mode == 'Test'
         self.data = CIC_IDS_2107_Base(root_dir, mode)
-        self.data.load_processed_data()
-        if category != None and category in self.data.label_category.keys():
-            self.data.get_category_data(category)
+        if rebalanced:
+            self.data.load_rebalanced_data()
+        else:
+            self.data.load_processed_data()
         super().__init__(self.data, batch_size=batch_size, shuffle=True, drop_last=True)
 
 
 if __name__ == '__main__':
-    dataset = CIC_IDS_2107_DataLoader('E:/DataSets/CIC-IDS2016')
+    dataset = CIC_IDS_2107_Base('E:/DataSets/CIC-IDS2016', 'Test')
     # # dataset.data_sort()
-    # dataset.load_sorted_data()
-    # dataset.data_process()
-    # dataset.save_data()
+    dataset.load_sorted_data_rebalance()
+    dataset.data_process()
+    dataset.save_data((dataset.rebalanced_train_data_dir, dataset.rebalanced_test_data_dir))
     # print(dataset.columns_name)
     # dataset.load_processed_data()
-    cnt = 0
-    for i in dataset:
-        print(i)
-        cnt += 1
-        if cnt > 10:
-            break
+    # dataset.load_rebalanced_data()
+    # for i in range(10):
+    #     print(dataset[i])

@@ -10,6 +10,7 @@
         "optim",
         "relu",
         "savetxt",
+        "unsqueeze",
         "UNSW",
         "vstack"
     ],

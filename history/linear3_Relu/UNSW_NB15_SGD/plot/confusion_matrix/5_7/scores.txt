@@ -1,0 +1,19 @@
+
+##########  history/linear3_Relu/UNSW_NB15_SGD/plot/confusion_matrix/5_7 ##########
+                 precision    recall  f1-score   support
+
+         Normal       0.89      1.00      0.94    887660
+        Generic       1.00      0.00      0.00     86245
+       Exploits       0.41      0.36      0.38     17633
+        Fuzzers       1.00      0.00      0.00      9703
+            DoS       1.00      0.00      0.00      6371
+ Reconnaissance       1.00      0.00      0.00      5540
+       Analysis       1.00      0.00      0.00      1032
+      Backdoors       1.00      0.00      0.00       941
+      Shellcode       1.00      0.00      0.00       616
+          Worms       1.00      0.00      0.00        67
+
+       accuracy                           0.88   1015808
+      macro avg       0.93      0.14      0.13   1015808
+   weighted avg       0.89      0.88      0.83   1015808
+
