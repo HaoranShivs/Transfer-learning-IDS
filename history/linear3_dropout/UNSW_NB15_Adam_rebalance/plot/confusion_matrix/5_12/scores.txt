@@ -1,0 +1,76 @@
+
+##########  history/linear3_dropout/UNSW_NB15_Adam_rebalance/plot/confusion_matrix/5_12 ##########
+                precision    recall  f1-score   support
+
+        Normal       1.00      0.98      0.99     20078
+       Generic       1.00      0.97      0.99     19946
+      Exploits       0.74      0.44      0.55     19976
+       Fuzzers       0.92      0.84      0.88     20007
+           DoS       0.29      0.62      0.40     19996
+Reconnaissance       0.99      0.69      0.81     20047
+      Analysis       0.57      0.30      0.39     19901
+     Backdoors       0.39      0.26      0.31     19964
+     Shellcode       0.79      0.99      0.87     20035
+         Worms       0.73      0.91      0.81     19986
+
+      accuracy                           0.70    199936
+     macro avg       0.74      0.70      0.70    199936
+  weighted avg       0.74      0.70      0.70    199936
+
+
+##########  history/linear3_dropout/UNSW_NB15_Adam_rebalance/plot/confusion_matrix/5_12 ##########
+                precision    recall  f1-score   support
+
+        Normal       0.99      0.98      0.99     19877
+       Generic       0.99      0.97      0.98     20020
+      Exploits       0.67      0.46      0.55     20072
+       Fuzzers       0.92      0.84      0.88     19916
+           DoS       0.29      0.64      0.40     19976
+Reconnaissance       0.99      0.69      0.81     19901
+      Analysis       0.75      0.23      0.36     20122
+     Backdoors       0.39      0.29      0.33     20039
+     Shellcode       0.79      0.98      0.88     20055
+         Worms       0.76      0.91      0.83     19958
+
+      accuracy                           0.70    199936
+     macro avg       0.76      0.70      0.70    199936
+  weighted avg       0.75      0.70      0.70    199936
+
+
+##########  history/linear3_dropout/UNSW_NB15_Adam_rebalance/plot/confusion_matrix/5_12 ##########
+                precision    recall  f1-score   support
+
+        Normal       1.00      0.98      0.99   1000139
+       Generic       0.00      1.00      0.00         0
+      Exploits       0.00      1.00      0.00         0
+       Fuzzers       0.00      1.00      0.00         0
+           DoS       0.00      1.00      0.00         0
+Reconnaissance       0.99      0.69      0.81     13984
+      Analysis       0.00      1.00      0.00         0
+     Backdoors       0.00      1.00      0.00         0
+     Shellcode       0.73      0.98      0.84      1511
+         Worms       0.08      0.91      0.14       174
+
+      accuracy                           0.98   1015808
+     macro avg       0.28      0.96      0.28   1015808
+  weighted avg       1.00      0.98      0.99   1015808
+
+
+##########  history/linear3_dropout/UNSW_NB15_Adam_rebalance/plot/confusion_matrix/5_12 ##########
+                precision    recall  f1-score   support
+
+        Normal       1.00      0.98      0.99    887356
+       Generic       0.99      0.97      0.98     86107
+      Exploits       0.74      0.46      0.57     17714
+       Fuzzers       0.43      0.85      0.57      9801
+           DoS       0.34      0.64      0.44      6622
+Reconnaissance       0.97      0.69      0.80      5513
+      Analysis       0.10      0.24      0.15      1110
+     Backdoors       0.07      0.29      0.12       931
+     Shellcode       0.22      0.99      0.36       585
+         Worms       0.02      0.91      0.04        69
+
+      accuracy                           0.97   1015808
+     macro avg       0.49      0.70      0.50   1015808
+  weighted avg       0.98      0.97      0.97   1015808
+

@@ -1,0 +1,18 @@
+
+##########  history/linear3_dropout/CIC_IDS2017_SGD_rebalance/plot/confusion_matrix/5_12 ##########
+              precision    recall  f1-score   support
+
+      BENIGN       1.00      0.66      0.79     19894
+         Bot       0.22      0.71      0.34       763
+ Brute Force       0.95      1.00      0.97      5565
+        DDoS       0.89      0.96      0.92     19969
+         Dos       0.93      0.86      0.90     20050
+  Heartbleed       0.06      1.00      0.11         4
+Infiltration       0.01      1.00      0.01        11
+    PortScan       0.96      0.99      0.97     19909
+  Web Attack       0.29      0.98      0.45       875
+
+    accuracy                           0.88     87040
+   macro avg       0.59      0.91      0.61     87040
+weighted avg       0.93      0.88      0.89     87040
+

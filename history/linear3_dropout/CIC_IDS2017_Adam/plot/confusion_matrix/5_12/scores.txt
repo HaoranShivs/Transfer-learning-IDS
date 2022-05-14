@@ -1,0 +1,54 @@
+
+##########  history/linear3_dropout/CIC_IDS2017_Adam/plot/confusion_matrix/5_12 ##########
+              precision    recall  f1-score   support
+
+      BENIGN       0.92      0.97      0.95     19892
+         Bot       1.00      0.00      0.00       764
+ Brute Force       0.99      1.00      1.00      5562
+        DDoS       0.99      1.00      0.99     19981
+         Dos       0.99      1.00      0.99     20042
+  Heartbleed       1.00      0.00      0.00         4
+Infiltration       1.00      0.00      0.00        11
+    PortScan       0.98      1.00      0.99     19906
+  Web Attack       1.00      0.00      0.00       878
+
+    accuracy                           0.97     87040
+   macro avg       0.99      0.55      0.55     87040
+weighted avg       0.97      0.97      0.96     87040
+
+
+##########  history/linear3_dropout/CIC_IDS2017_Adam/plot/confusion_matrix/5_12 ##########
+              precision    recall  f1-score   support
+
+      BENIGN       0.77      0.91      0.84     19897
+         Bot       1.00      0.00      0.00       764
+ Brute Force       1.00      0.00      0.00      5559
+        DDoS       0.95      0.98      0.97     19981
+         Dos       0.92      0.96      0.94     20028
+  Heartbleed       1.00      0.00      0.00         4
+Infiltration       1.00      0.00      0.00        11
+    PortScan       0.89      0.99      0.94     19918
+  Web Attack       1.00      0.00      0.00       878
+
+    accuracy                           0.88     87040
+   macro avg       0.95      0.43      0.41     87040
+weighted avg       0.89      0.88      0.84     87040
+
+
+##########  history/linear3_dropout/CIC_IDS2017_Adam/plot/confusion_matrix/5_12 ##########
+              precision    recall  f1-score   support
+
+      BENIGN       0.92      0.97      0.95     19908
+         Bot       1.00      0.00      0.00       761
+ Brute Force       0.99      1.00      1.00      5565
+        DDoS       0.99      1.00      1.00     19984
+         Dos       0.99      1.00      0.99     20037
+  Heartbleed       1.00      0.00      0.00         4
+Infiltration       1.00      0.00      0.00        11
+    PortScan       0.98      1.00      0.99     19895
+  Web Attack       1.00      0.00      0.00       875
+
+    accuracy                           0.97     87040
+   macro avg       0.99      0.55      0.55     87040
+weighted avg       0.97      0.97      0.96     87040
+

@@ -1,0 +1,18 @@
+
+##########  history/CNN3_4/CIC_IDS2017_Adam_rebalance/plot/confusion_matrix/5_12 ##########
+              precision    recall  f1-score   support
+
+      BENIGN       0.98      0.92      0.95     19899
+         Bot       0.46      0.72      0.56       763
+ Brute Force       0.99      1.00      0.99      5566
+        DDoS       0.98      0.99      0.99     19983
+         Dos       0.98      0.97      0.98     20035
+  Heartbleed       0.57      1.00      0.73         4
+Infiltration       0.23      1.00      0.37        11
+    PortScan       0.99      0.99      0.99     19902
+  Web Attack       0.58      0.99      0.73       877
+
+    accuracy                           0.97     87040
+   macro avg       0.75      0.95      0.81     87040
+weighted avg       0.98      0.97      0.97     87040
+

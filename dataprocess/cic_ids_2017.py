@@ -2,8 +2,6 @@ import numpy as np
 import pandas as pd
 import glob
 import os
-from PIL import Image
-from torch import feature_alpha_dropout
 
 from torch.utils.data import DataLoader, Dataset
 

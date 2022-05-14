@@ -78,6 +78,34 @@ class CNN3_3(nn.Module):
         return x
 
 
+class CNN3_4(nn.Module):
+    def __init__(self, input_channel, output_channel):
+        super(CNN3_4, self).__init__()
+        self.fc1_in = nn.Linear(input_channel, 128) # (N, 128)
+        self.cnn1 = nn.Conv2d(1, 2, 5, 1)    # (N, 2, 4, 12)
+        self.cnn2 = nn.Conv2d(2, 5, 3, 1)   #(N, 5, 2, 10)
+        # self.cnn3 = nn.Conv2d(1, 1, 3, 1)   #(N, 1, H-8, W-8)
+        # self.fc1 = nn.Linear((H-8)*(W-8), 128)
+        self.fc2 = nn.Linear(2*10*5, 128)
+        self.relu = nn.ReLU()
+        self.fc3_out = nn.Linear(128, output_channel) 
+        self.softmax = nn.Softmax(-1)
+
+    def forward(self, inputs):
+        x = self.fc1_in(inputs)
+        x = unsqueeze(x, 1)
+        x = reshape(x, (x.shape[0], 1, 8, 16))
+        x = self.cnn1(x)
+        x = self.cnn2(x)
+        # x = self.cnn3(x)
+        x = reshape(x,(x.shape[0], -1))
+        x = self.fc2(x)
+        x = self.relu(x)
+        x = self.fc3_out(x)
+        x = self.softmax(x)
+        return x
+
+
 class CNN3(nn.Module):
     def __init__(self, input_shape, output_channel):
         super(CNN3, self).__init__()

@@ -1,0 +1,18 @@
+
+##########  history/CNN3_3/CIC_IDS2017_UNSW_NB15_transfer_no_frozen_2/plot/confusion_matrix/5_11 ##########
+              precision    recall  f1-score   support
+
+      BENIGN       0.98      0.80      0.88     19899
+         Bot       1.00      0.00      0.00       763
+ Brute Force       0.96      1.00      0.98      5568
+        DDoS       0.96      0.95      0.95     19981
+         Dos       0.92      0.95      0.93     20034
+  Heartbleed       0.67      1.00      0.80         4
+Infiltration       0.01      1.00      0.02        11
+    PortScan       0.95      0.99      0.97     19904
+  Web Attack       0.37      0.99      0.53       876
+
+    accuracy                           0.92     87040
+   macro avg       0.76      0.85      0.67     87040
+weighted avg       0.95      0.92      0.92     87040
+

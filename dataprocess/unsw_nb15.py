@@ -425,19 +425,26 @@ class UNSW_NB15_BASE(Dataset):
         df = df.sample(frac=1, random_state=1)
 
         columns = df.columns.to_list()
+        print(columns)
         self.columns_name = columns
-
+        
         self.data_array = df.to_numpy(dtype=np.float32)
 
     def save_sorted_data(self):
         labels_name = self.label_category.keys()
+        labels = np.eye(len(labels_name))
         print(self.label_category, labels_name)
         for i in labels_name:
-            label = self.label_category[i]
-            label_index = len(self.columns_keep_idx) - 1
-            data = self.data_array[self.data_array[:, label_index] == label]
+            label = labels[self.label_category[i]]
+            label_index = len(labels_name)
+            indices = []
+            for j in range(self.data_array.shape[0]):
+                if (self.data_array[j, -label_index:] == label).all():
+                    indices.append(j)
+            data = self.data_array[indices]
             file_path = self.save_sorted_data_dir + '/UNSW_NB15_' + i.decode()
             np.save(file_path, data)
+            print(label, self.label_category[i])
 
     def separate_feature_label(self):
         label_length = len(self.label_category)
@@ -451,9 +458,13 @@ class UNSW_NB15_BASE(Dataset):
         sorted_data_dir_list = [self.save_sorted_data_dir + '/' + i for i in os.listdir(self.save_sorted_data_dir)]
 
         data_array = np.load(sorted_data_dir_list[0])
+        # print(sorted_data_dir_list[0])
         for i in range(1, len(sorted_data_dir_list)):
+            # print(sorted_data_dir_list[i])
             _data_array = np.load(sorted_data_dir_list[i])
             data_array = np.vstack((data_array, _data_array))
+        
+        np.random.shuffle(data_array)
 
         self.data_array = data_array
         self.data_num = self.data_array.shape[0]
@@ -536,7 +547,6 @@ class UNSW_NB15_BASE(Dataset):
         self.data_num = self.data_feature.shape[0]
         feature_length = self.data_feature.shape[1]
         self.feature_length = feature_length
-        data_array = None
 
     def load_rebalanced_data(self):
         if self.mode == 'Train':
@@ -567,27 +577,32 @@ if __name__ == '__main__':
     # dataset = UNSW_NB15_DataLoader('E:/DataSets/UNSW-NB15 - CSV Files', 128, mode='Train', rebalanced=True)
     # dataset.load_raw_data()
     # dataset.data_process()
-    # dataset.save_sorted_data()
-    # dataset.load_sorted_data_rebalanced()
     # dataset.one_hot()
-    # dataset.separate_feature_label()
-    # dataset.save_data()
-    # dataset.save_data((dataset.rebalanced_train_data_dir, dataset.rebalanced_test_data_dir))
-    # dataset.Uniform_data_by_label_type()
-    # print(dataset.to_num_column_dic)
-    # dataset.load_processed_data()
-    dataset.load_rebalanced_data()
-    # dataset.image_by_features()
-    # dataset.save_image_data()
-    # dataset.load_rebalanced_data()
-    # print(np.unique(dataset.data_label))
+    # dataset.save_sorted_data()
+    # print(dataset.data_array.shape)
+    dataset.load_sorted_data()
     # dataset.load_sorted_data_rebalanced()
-    # cnt = 0
-    # for (x, y) in dataset:
-    #     if cnt > 10:
-    #         break
-    #     print(x,x.shape)
-    #     cnt += 1
-    for i in range(10):
-        x,y = dataset[i]
-        print(x.shape,y.shape)
+    print(np.unique(dataset.data_array[:,-10:], axis=0))
+    dataset.separate_feature_label()
+    # print(dataset.data_feature.shape, dataset.data_label.shape)
+    dataset.save_data()
+    # dataset.save_data((dataset.rebalanced_train_data_dir, dataset.rebalanced_test_data_dir))
+    # # dataset.Uniform_data_by_label_type()
+    # # print(dataset.to_num_column_dic)
+    # dataset.load_processed_data()
+    # print(dataset.data_feature.shape)
+    # dataset.load_rebalanced_data()
+    # # dataset.image_by_features()
+    # # dataset.save_image_data()
+    # # dataset.load_rebalanced_data()
+    # # print(np.unique(dataset.data_label))
+    # # dataset.load_sorted_data_rebalanced()
+    # # cnt = 0
+    # # for (x, y) in dataset:
+    # #     if cnt > 10:
+    # #         break
+    # #     print(x,x.shape)
+    # #     cnt += 1
+    # for i in range(10):
+    #     x,y = dataset[i]
+    #     print(x.shape,y.shape)
