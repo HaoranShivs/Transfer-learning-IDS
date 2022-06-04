@@ -7,7 +7,6 @@ pd.options.display.max_rows = 50
 
 from torch.utils.data import DataLoader, Dataset
 
-
 class UNSW_NB15_BASE(Dataset):
 
     def __init__(self, root_dir, mode='Train'):
